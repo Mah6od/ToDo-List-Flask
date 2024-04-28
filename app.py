@@ -1,12 +1,23 @@
-# Uses a single route
-
-from flask import Flask, render_template, request
+from flask import Flask, request, redirect, render_template
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
+tasks = []
 
-@app.route("/", methods=["GET", "POST"])
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    if request.method == "POST":
-        return render_template("greet.html", name=request.form.get("name", "world"))
-    return render_template("index.html")
+    if request.method == 'POST':
+        task = request.form['task']
+        tasks.append({'name': task, 'done': False})
+    return render_template('todos.html', title="Get It Done!", tasks=tasks)
+
+@app.route('/toggle_done/<int:task_index>', methods=['POST'])
+def toggle_done(task_index):
+    if request.method == 'POST':
+        if 0 <= task_index < len(tasks):
+            task = tasks[task_index]
+            task['done'] = not task['done']
+    return redirect('/')
+
+app.run()

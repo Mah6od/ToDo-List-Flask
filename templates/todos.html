@@ -1,0 +1,33 @@
+<!-- todos.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add your tasks!</h1>
+    <form method='post'>
+        <label>
+            Add Task:
+            <input type="text" name='task' />
+        </label>
+        <input type="submit" value='Add Task' />
+    </form>
+
+    <hr />
+
+    {% if tasks|length == 0 %}
+    <p>No tasks yet</p>
+    {% else %}
+
+        <ul>
+            {% for task in tasks %}
+            <li>{{ task.name }} 
+                <form method="post" action="/toggle_done/{{ loop.index0 }}">
+                    <input type="checkbox" name="task_done" onchange="this.form.submit()" {% if task.done %}checked{% endif %}>
+                </form>
+                {% if task.done %}(Done){% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+{% endblock %}
